@@ -22,7 +22,8 @@ app.use('/scores', require('./routes/scores'));
 app.use('/leaderboard', require('./routes/leaderboard'));
 app.use('/judge', require('./routes/judge'));
 app.use('/audit-logs', require('./routes/audit'));
-
+app.use('/announcements', require('./routes/announcements'));
+app.use('/duplicates', require('./routes/duplicates'));
 app.get('/', (req, res) => {
   res.send('HackOS API running');
 });
