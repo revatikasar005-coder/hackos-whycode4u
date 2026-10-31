@@ -1,13 +1,33 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const supabase = require('./db');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Auth routes
+const authRoutes = require('./routes/auth');
+app.use('/auth', authRoutes);
+app.use('/', authRoutes);
+
+// Phase 2 routes
+// app.use('/teams', require('./routes/teams'));
+// app.use('/checkin', require('./routes/checkin'));
+// app.use('/submissions', require('./routes/submissions'));
+
+// Basic + health check
 app.get('/', (req, res) => {
-  res.send('Server running');
+  res.send('HackOS API running');
+});
+
+app.get('/health', async (req, res) => {
+  const { error } = await supabase.from('users').select('id').limit(1);
+  if (error) {
+    return res.status(500).json({ status: 'error', db: 'not connected', message: error.message });
+  }
+  res.json({ status: 'ok', db: 'connected' });
 });
 
 const PORT = process.env.PORT || 5000;
