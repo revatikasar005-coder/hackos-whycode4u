@@ -1,6 +1,10 @@
+import { QRCodeSVG } from 'qrcode.react'
 import { currentUser, announcements, schedule, submission } from '../data'
 
 export default function ParticipantDashboard() {
+  // Abhi fake id. Baad mein Anuma ki API se user ka asli id aayega.
+  const userId = 'USER-001'
+
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <h1 className="text-2xl font-bold">Hi, {currentUser.name}!</h1>
@@ -18,6 +22,12 @@ export default function ParticipantDashboard() {
           <p className="text-gray-500 text-sm">Submission</p>
           <p className="font-semibold">{submission.status}</p>
         </div>
+      </div>
+
+      <div className="bg-white p-4 rounded-xl shadow flex flex-col items-center gap-2">
+        <h2 className="font-bold">Your check-in QR</h2>
+        <QRCodeSVG value={userId} size={160} />
+        <p className="text-sm text-gray-500">Event pe ye QR volunteer ko dikhao ({userId})</p>
       </div>
 
       <div className="bg-white p-4 rounded-xl shadow">
