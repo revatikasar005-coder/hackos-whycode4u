@@ -17,6 +17,12 @@ app.use('/teams', require('./routes/teams'));
 app.use('/submissions', require('./routes/submissions'));
 app.use('/checkin', require('./routes/checkin'));
 
+// Phase 3 routes
+app.use('/scores', require('./routes/scores'));
+app.use('/leaderboard', require('./routes/leaderboard'));
+app.use('/judge', require('./routes/judge'));
+app.use('/audit-logs', require('./routes/audit'));
+
 app.get('/', (req, res) => {
   res.send('HackOS API running');
 });
