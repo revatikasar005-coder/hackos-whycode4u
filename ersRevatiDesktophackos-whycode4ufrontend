@@ -1,0 +1,6 @@
+[33m1fb3f9b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfrontend-ui[m[33m, [m[1;31morigin/frontend-ui[m[33m)[m added mock data for participant dashboard
+[33maeaa7d5[m Merge branch 'main' of https://github.com/revatikasar005-coder/hackos-whycode4u into frontend-ui
+[33mccdadb6[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge pull request #1 from revatikasar005-coder/frontend-ui
+[33mb9cf92f[m ui redesign with indigo theme and home page
+[33mcd01dda[m remove extra root package-lock
+[33m3e7a933[m qr code on dashboard
