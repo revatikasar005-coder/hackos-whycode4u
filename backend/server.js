@@ -14,8 +14,8 @@ app.use('/', authRoutes);
 
 // Phase 2 routes
 app.use('/teams', require('./routes/teams'));
+app.use('/submissions', require('./routes/submissions'));
 // app.use('/checkin', require('./routes/checkin'));
-// app.use('/submissions', require('./routes/submissions'));
 
 app.get('/', (req, res) => {
   res.send('HackOS API running');
