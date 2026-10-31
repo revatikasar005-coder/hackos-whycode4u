@@ -1,4 +1,4 @@
-import { currentUser, announcements, schedule, submission } from '../mock/data'
+import { currentUser, announcements, schedule, submission } from '../data'
 
 export default function ParticipantDashboard() {
   return (

@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ParticipantDashboard from './pages/ParticipantDashboard';
 import Submission from './pages/Submission';
+import OrganizerDashboard from './pages/OrganizerDashboard';
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <div className="space-x-6">
           <Link to="/dashboard" className="hover:text-yellow-400 font-medium transition">Dashboard</Link>
           <Link to="/submit" className="hover:text-purple-400 font-medium transition">Submit</Link>
+          <Link to="/organizer" className="hover:text-pink-400 font-medium transition">Organizer</Link>
           <Link to="/login" className="hover:text-blue-400 font-medium transition">Login</Link>
           <Link to="/register" className="hover:text-green-400 font-medium transition">Register</Link>
         </div>
@@ -24,6 +26,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<ParticipantDashboard />} />
         <Route path="/submit" element={<Submission />} />
+        <Route path="/organizer" element={<OrganizerDashboard />} />
       </Routes>
     </Router>
   );
