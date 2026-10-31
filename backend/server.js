@@ -13,11 +13,10 @@ app.use('/auth', authRoutes);
 app.use('/', authRoutes);
 
 // Phase 2 routes
-// app.use('/teams', require('./routes/teams'));
+app.use('/teams', require('./routes/teams'));
 // app.use('/checkin', require('./routes/checkin'));
 // app.use('/submissions', require('./routes/submissions'));
 
-// Basic + health check
 app.get('/', (req, res) => {
   res.send('HackOS API running');
 });
@@ -31,6 +30,10 @@ app.get('/health', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+});
+
+server.on('error', (err) => {
+  console.error('Server error:', err.message);
 });
