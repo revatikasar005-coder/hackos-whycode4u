@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import QRCode from 'qrcode'
-import { Html5QrcodeScanner } from 'html5-qrcode'
 import { db } from './db'
 
 // offline/.env mein likho: VITE_API_URL=http://localhost:5000
@@ -10,24 +9,12 @@ const API = import.meta.env.VITE_API_URL || ''
 const box = { background: 'white', padding: 16, borderRadius: 12, boxShadow: '0 1px 4px #0002', marginBottom: 16 }
 const btn = { padding: 8, marginRight: 8 }
 
-function Scanner({ onScan }) {
-  useEffect(() => {
-    const scanner = new Html5QrcodeScanner('reader', { fps: 10, qrbox: 220 }, false)
-    scanner.render((text) => onScan(text.trim()), () => {})
-    return () => {
-      scanner.clear().catch(() => {})
-    }
-  }, [])
-  return <div id="reader" />
-}
-
 export default function App() {
   const [online, setOnline] = useState(navigator.onLine)
   const [rows, setRows] = useState([])
   const [userId, setUserId] = useState('USER-001')
   const [qr, setQr] = useState('')
   const [msg, setMsg] = useState('')
-  const [camera, setCamera] = useState(false)
   const syncing = useRef(false)
 
   const refresh = async () => setRows(await db.checkins.orderBy('id').reverse().toArray())
@@ -133,11 +120,7 @@ export default function App() {
 
       <div style={box}>
         <h3>2. Scan karo (local database mein save hoga)</h3>
-        <button onClick={() => setCamera((c) => !c)} style={btn}>
-          {camera ? 'Camera band karo' : 'Camera scanner chalu karo'}
-        </button>
         <button onClick={() => saveScan(userId)} style={btn}>Test scan: {userId}</button>
-        {camera && <Scanner onScan={saveScan} />}
       </div>
 
       <div style={box}>
