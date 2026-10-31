@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import usePersistentState from '../usePersistentState'
 
 const rubric = [
   { key: 'innovation', label: 'Innovation & relevance', max: 20 },
@@ -23,9 +24,10 @@ const totalOf = (values) =>
 export default function JudgePage() {
   const [selected, setSelected] = useState(teams[0].id)
   const [drafts, setDrafts] = useState({})
-  const [saved, setSaved] = useState({})
-  const [audit, setAudit] = useState([])
+  const [saved, setSaved] = usePersistentState('judge_saved', {})
+  const [audit, setAudit] = usePersistentState('judge_audit', [])
 
+  const cardClass = 'bg-white p-4 rounded-xl shadow-md border-t-4 border-indigo-500'
   const current = drafts[selected] || saved[selected] || {}
 
   const handleChange = (r, value) => {
@@ -54,10 +56,10 @@ export default function JudgePage() {
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Judge Scoring ({judgeName})</h1>
+      <h1 className="text-2xl font-bold text-slate-800">Judge Scoring ({judgeName})</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white p-4 rounded-xl shadow">
+        <div className={cardClass}>
           <h2 className="font-bold mb-2">Assigned teams</h2>
           {teams.map((t) => (
             <button
@@ -65,7 +67,7 @@ export default function JudgePage() {
               onClick={() => setSelected(t.id)}
               className={
                 'w-full text-left p-2 rounded mb-1 ' +
-                (selected === t.id ? 'bg-blue-600 text-white' : 'hover:bg-gray-100')
+                (selected === t.id ? 'bg-indigo-600 text-white' : 'hover:bg-gray-100')
               }
             >
               {t.name}
@@ -74,7 +76,7 @@ export default function JudgePage() {
           ))}
         </div>
 
-        <div className="md:col-span-2 bg-white p-4 rounded-xl shadow space-y-3">
+        <div className={cardClass + ' md:col-span-2 space-y-3'}>
           <h2 className="font-bold">
             Score: {teams.find((t) => t.id === selected).name}
           </h2>
@@ -88,7 +90,7 @@ export default function JudgePage() {
                 type="number"
                 min="0"
                 max={r.max}
-                className="w-20 border p-1 rounded text-right"
+                className="w-20 border border-slate-300 p-1 rounded text-right"
                 value={current[r.key] ?? ''}
                 onChange={(e) => handleChange(r, e.target.value)}
               />
@@ -97,14 +99,17 @@ export default function JudgePage() {
 
           <div className="flex items-center justify-between border-t pt-3">
             <p className="font-bold">Total: {totalOf(current)} / 100</p>
-            <button onClick={handleSave} className="bg-blue-600 text-white px-4 py-2 rounded">
+            <button
+              onClick={handleSave}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold"
+            >
               Save score
             </button>
           </div>
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded-xl shadow overflow-x-auto">
+      <div className={cardClass + ' overflow-x-auto'}>
         <h2 className="font-bold mb-2">Audit log</h2>
         {audit.length === 0 ? (
           <p className="text-sm text-gray-500">Abhi koi score save nahi hua.</p>

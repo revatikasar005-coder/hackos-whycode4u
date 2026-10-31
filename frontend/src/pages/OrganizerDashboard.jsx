@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import usePersistentState from '../usePersistentState'
 
 const stats = { registered: 120, checkedIn: 84, teams: 32, submissionsPending: 14 }
 
@@ -10,16 +11,20 @@ const initialTeams = [
 ]
 
 export default function OrganizerDashboard() {
-  const [announcements, setAnnouncements] = useState([
+  const [announcements, setAnnouncements] = usePersistentState('announcements', [
     { id: 1, title: 'Welcome', message: 'Check-in opens at 9 AM.' },
   ])
   const [title, setTitle] = useState('')
   const [message, setMessage] = useState('')
 
+  const cardClass = 'bg-white p-4 rounded-xl shadow-md border-t-4 border-indigo-500'
+  const inputClass =
+    'w-full border border-slate-300 p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400'
+
   const addAnnouncement = (e) => {
     e.preventDefault()
-    if (!title || !message) return
-    setAnnouncements([{ id: Date.now(), title, message }, ...announcements])
+    if (!title.trim() || !message.trim()) return
+    setAnnouncements([{ id: Date.now(), title: title.trim(), message: message.trim() }, ...announcements])
     setTitle('')
     setMessage('')
   }
@@ -28,35 +33,35 @@ export default function OrganizerDashboard() {
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Organizer Dashboard</h1>
+      <h1 className="text-2xl font-bold text-slate-800">Organizer Dashboard</h1>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-xl shadow">
+        <div className={cardClass}>
           <p className="text-gray-500 text-sm">Registered</p>
           <p className="text-2xl font-bold">{stats.registered}</p>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow">
+        <div className={cardClass}>
           <p className="text-gray-500 text-sm">Checked-in</p>
           <p className="text-2xl font-bold">{stats.checkedIn}</p>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow">
+        <div className={cardClass}>
           <p className="text-gray-500 text-sm">Teams</p>
           <p className="text-2xl font-bold">{stats.teams}</p>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow">
+        <div className={cardClass}>
           <p className="text-gray-500 text-sm">Submissions pending</p>
           <p className="text-2xl font-bold">{stats.submissionsPending}</p>
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded-xl shadow">
+      <div className={cardClass}>
         <p className="font-semibold mb-2">Check-in progress: {percent}%</p>
         <div className="w-full bg-gray-200 rounded h-3">
-          <div className="bg-blue-600 h-3 rounded" style={{ width: percent + '%' }}></div>
+          <div className="bg-indigo-600 h-3 rounded" style={{ width: percent + '%' }}></div>
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded-xl shadow overflow-x-auto">
+      <div className={cardClass + ' overflow-x-auto'}>
         <h2 className="font-bold mb-2">Teams</h2>
         <table className="w-full text-left text-sm">
           <thead>
@@ -80,14 +85,16 @@ export default function OrganizerDashboard() {
         </table>
       </div>
 
-      <div className="bg-white p-4 rounded-xl shadow space-y-3">
+      <div className={cardClass + ' space-y-3'}>
         <h2 className="font-bold">Announcements</h2>
         <form onSubmit={addAnnouncement} className="space-y-2">
-          <input className="w-full border p-2 rounded" placeholder="Title"
+          <input className={inputClass} placeholder="Title"
             value={title} onChange={(e) => setTitle(e.target.value)} />
-          <textarea className="w-full border p-2 rounded" placeholder="Message"
+          <textarea className={inputClass} placeholder="Message"
             value={message} onChange={(e) => setMessage(e.target.value)} />
-          <button className="bg-blue-600 text-white px-4 py-2 rounded">Post</button>
+          <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold">
+            Post
+          </button>
         </form>
         {announcements.map((a) => (
           <div key={a.id} className="border-t pt-2">
