@@ -1,122 +1,96 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react'
+import QRCode from 'qrcode'
+import { db } from './db'
 
-function App() {
-  const [count, setCount] = useState(0)
+const box = { background: 'white', padding: 16, borderRadius: 12, boxShadow: '0 1px 4px #0002', marginBottom: 16 }
+
+export default function App() {
+  const [online, setOnline] = useState(navigator.onLine)
+  const [rows, setRows] = useState([])
+  const [userId, setUserId] = useState('USER-001')
+  const [qr, setQr] = useState('')
+  const [msg, setMsg] = useState('')
+
+  const refresh = async () => setRows(await db.checkins.orderBy('id').reverse().toArray())
+
+  const makeQr = async () => setQr(await QRCode.toDataURL(userId.trim()))
+
+  const addScan = async () => {
+    const id = userId.trim()
+    if (!id) return
+    const exists = await db.checkins.where('userId').equals(id).first()
+    if (exists) {
+      setMsg(id + ': Already checked in')
+      return
+    }
+    await db.checkins.add({ userId: id, scannedAt: new Date().toISOString(), status: 'pending' })
+    setMsg(id + ': scan saved' + (navigator.onLine ? '' : ' (offline)'))
+    refresh()
+  }
+
+  const syncNow = async () => {
+    const pending = await db.checkins.where('status').equals('pending').toArray()
+    if (!pending.length) {
+      setMsg('Nothing to sync')
+      return
+    }
+    // Abhi fake server. Baad mein yahan POST /checkin/bulk aayega (Anuma ki API).
+    await new Promise((r) => setTimeout(r, 500))
+    await db.checkins.where('status').equals('pending').modify({ status: 'synced' })
+    setMsg(pending.length + ' scan(s) synced')
+    refresh()
+  }
+
+  useEffect(() => {
+    refresh()
+    const goOnline = () => {
+      setOnline(true)
+      syncNow()
+    }
+    const goOffline = () => setOnline(false)
+    window.addEventListener('online', goOnline)
+    window.addEventListener('offline', goOffline)
+    return () => {
+      window.removeEventListener('online', goOnline)
+      window.removeEventListener('offline', goOffline)
+    }
+  }, [])
+
+  const pendingCount = rows.filter((r) => r.status === 'pending').length
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
+    <div style={{ maxWidth: 560, margin: '0 auto', padding: 24 }}>
+      <h1>Offline Check-in Test</h1>
+      <p>
+        Status:{' '}
+        <b style={{ color: online ? 'green' : 'crimson' }}>{online ? 'Online' : 'Offline'}</b>
+      </p>
+
+      {msg && <p style={{ background: '#ccfbf1', padding: 8, borderRadius: 8 }}>{msg}</p>}
+
+      <div style={box}>
+        <h3>1. QR banao</h3>
+        <input value={userId} onChange={(e) => setUserId(e.target.value)} style={{ padding: 8 }} />
+        <button onClick={makeQr} style={{ marginLeft: 8, padding: 8 }}>Generate QR</button>
+        {qr && <div><img src={qr} alt="QR" width="160" /></div>}
+      </div>
+
+      <div style={box}>
+        <h3>2. Scan save karo (local database mein)</h3>
+        <button onClick={addScan} style={{ padding: 8 }}>Add scan for {userId}</button>
+      </div>
+
+      <div style={box}>
+        <h3>3. Sync (pending: {pendingCount})</h3>
+        <button onClick={syncNow} disabled={!online || !pendingCount} style={{ padding: 8 }}>
+          Sync now
         </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        {rows.map((r) => (
+          <p key={r.id} style={{ borderBottom: '1px solid #ddd', margin: '6px 0' }}>
+            {r.userId} - <b>{r.status}</b>
+          </p>
+        ))}
+      </div>
+    </div>
   )
 }
-
-export default App
