@@ -2,8 +2,8 @@
 import QRCode from 'qrcode'
 import { db } from './db'
 
-// offline/.env mein likho: VITE_API_URL=http://localhost:5000
-// Khali chhodoge to demo mode (fake sync) chalega.
+// Create offline/.env with: VITE_API_URL=http://localhost:5000
+// If empty, demo mode (fake sync) is used.
 const API = import.meta.env.VITE_API_URL || ''
 
 const box = { background: 'white', padding: 16, borderRadius: 12, boxShadow: '0 1px 4px #0002', marginBottom: 16 }
@@ -33,7 +33,7 @@ export default function App() {
       return
     }
     await db.checkins.add({ userId: id, scannedAt: new Date().toISOString(), status: 'pending' })
-    setMsg(id + ': scan saved' + (navigator.onLine ? '' : ' (offline)'))
+    setMsg(id + ': Check-in saved' + (navigator.onLine ? '' : ' (offline)'))
     refresh()
   }
 
@@ -62,9 +62,9 @@ export default function App() {
         .where('id')
         .anyOf(pending.map((c) => c.id))
         .modify({ status: 'synced' })
-      setMsg(pending.length + ' scan(s) synced' + (API ? '' : ' (demo mode)'))
+      setMsg(pending.length + ' check-in(s) synced' + (API ? '' : ' (demo mode)'))
     } catch (e) {
-      setMsg('Sync fail: ' + e.message + '. Scans pending hain, internet aane par phir try hoga.')
+      setMsg('Sync failed: ' + e.message + '. Check-ins are still pending and will retry when online.')
     } finally {
       syncing.current = false
       refresh()
@@ -112,14 +112,14 @@ export default function App() {
       {msg && <p style={{ background: '#ccfbf1', padding: 8, borderRadius: 8 }}>{msg}</p>}
 
       <div style={box}>
-        <h3>1. QR banao</h3>
+        <h3>1. Generate QR</h3>
         <input value={userId} onChange={(e) => setUserId(e.target.value)} style={{ padding: 8 }} />
         <button onClick={makeQr} style={{ ...btn, marginLeft: 8 }}>Generate QR</button>
         {qr && <div><img src={qr} alt="QR" width="160" /></div>}
       </div>
 
       <div style={box}>
-        <h3>2. Scan karo (local database mein save hoga)</h3>
+        <h3>2. Scan (saved in local database)</h3>
         <button onClick={() => saveScan(userId)} style={btn}>Test scan: {userId}</button>
       </div>
 
