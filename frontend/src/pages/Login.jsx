@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import api from '../api'; // api.js ka path apne structure ke hisaab se dekh lena
 
 const homeFor = { participant: '/dashboard', organizer: '/organizer', judge: '/judge' }
 
@@ -8,18 +9,34 @@ export default function Login({ onLogin }) {
   const [password, setPassword] = useState('')
   const [role, setRole] = useState('participant')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
     if (!email || !password) {
       setError('Email aur password dono daalo')
       return
     }
     setError('')
-    // Abhi fake login. Baad mein Anuma ki API role wapas degi.
-    onLogin(role)
-    navigate(homeFor[role])
+    setLoading(true)
+
+    try {
+      // Anuma ke backend API par request bhej rahe hain
+      const response = await api.post('/auth/login', { email, password, role })
+      
+      console.log("Login Success:", response.data)
+      
+      // Agar backend se role ya success aaye toh onlogin aur navigate chalega
+      const userRole = response.data.role || role
+      onLogin(userRole)
+      navigate(homeFor[userRole] || '/dashboard')
+    } catch (err) {
+      console.error("Login Error:", err)
+      setError(err.response?.data?.message || 'Login fail ho gaya! Details check karo.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -43,8 +60,12 @@ export default function Login({ onLogin }) {
           <option value="organizer">Login as Organizer</option>
           <option value="judge">Login as Judge</option>
         </select>
-        <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white p-2.5 rounded-lg font-semibold">
-          Login
+        <button 
+          type="submit" 
+          disabled={loading}
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white p-2.5 rounded-lg font-semibold disabled:opacity-50"
+        >
+          {loading ? 'Logging in...' : 'Login'}
         </button>
       </form>
     </div>
