@@ -4,7 +4,17 @@ const cors = require('cors');
 const supabase = require('./db');
 
 const app = express();
-app.use(cors());
+
+// CORS configuration for Frontend and Local development
+app.use(cors({
+  origin: [
+    'http://localhost:5173', 
+    'http://localhost:3000', 
+    'https://hackos-whycode4u.vercel.app'
+  ],
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Auth routes
@@ -24,6 +34,7 @@ app.use('/judge', require('./routes/judge'));
 app.use('/audit-logs', require('./routes/audit'));
 app.use('/announcements', require('./routes/announcements'));
 app.use('/duplicates', require('./routes/duplicates'));
+
 app.get('/', (req, res) => {
   res.send('HackOS API running');
 });
