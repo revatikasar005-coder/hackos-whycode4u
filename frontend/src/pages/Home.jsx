@@ -177,7 +177,7 @@ export default function Home() {
       <div style={{ position: 'relative', maxWidth: 1120, margin: '0 auto', padding: '0 20px 80px' }}>
         {/* HERO */}
         <section style={{ textAlign: 'center', padding: '72px 0 48px' }}>
-          <span className="pill fade-up">🏆 Built by Code Queens</span>
+          <span className="pill fade-up">🏆 IdeaForge_ra</span>
           <h1 className="fade-up d1" style={{ fontSize: 'clamp(2.1rem, 6vw, 3.9rem)', fontWeight: 800, maxWidth: 820, margin: '18px auto 0' }}>
             Run your hackathon with smarter <Typewriter words={WORDS} />
           </h1>
@@ -337,7 +337,7 @@ export default function Home() {
 
         {/* TEAM */}
         <section style={{ marginTop: 96 }}>
-          <SectionTitle title="👑 Meet Team Code Queens" />
+          <SectionTitle title="👑 Meet IdeaForge_ra" />
           <div className="grid-auto" style={{ maxWidth: 800, margin: '0 auto', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
             {team.map((m, i) => (
               <Reveal key={m.name} delay={i * 100}>
@@ -372,7 +372,7 @@ export default function Home() {
 
       <footer style={{ borderTop: '1px solid var(--border)', padding: '22px 0', textAlign: 'center', fontSize: 13, color: '#71717a' }}>
         © 2026 HackOS · Built with 💖 by IdeaForge_ra
-        
+
       </footer>
     </div>
   )
