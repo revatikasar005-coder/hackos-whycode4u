@@ -33,7 +33,6 @@ app.use('/leaderboard', require('./routes/leaderboard'));
 app.use('/judge', require('./routes/judge'));
 app.use('/audit-logs', require('./routes/audit'));
 app.use('/announcements', require('./routes/announcements'));
-js
 app.use('/paypal', require('./routes/paypal'));
 app.use('/duplicates', require('./routes/duplicates'));
 
