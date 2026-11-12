@@ -41,6 +41,7 @@ app.get('/', (req, res) => {
   res.send('HackOS API running');
 });
 
+
 app.get('/health', async (req, res) => {
   const { error } = await supabase.from('users').select('id').limit(1);
   if (error) {
@@ -49,10 +50,13 @@ app.get('/health', async (req, res) => {
   res.json({ status: 'ok', db: 'connected' });
 });
 
+
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+
 
 server.on('error', (err) => {
   console.error('Server error:', err.message);
