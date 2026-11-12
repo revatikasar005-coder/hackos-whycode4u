@@ -5,7 +5,7 @@ const supabase = require('./db');
 
 const app = express();
 
-// CORS configuration for Frontend and Local development
+// CORS configuration for Frontend and Local development.
 app.use(cors({
   origin: [
     'http://localhost:5173', 
