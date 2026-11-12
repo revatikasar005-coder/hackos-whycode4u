@@ -11,13 +11,14 @@ import Leaderboard from './pages/Leaderboard';
 import TeamPage from './pages/TeamPage';
 import AuditLog from './pages/AuditLog';
 import Scanner from './pages/Scanner';
+import Sponsor from './pages/Sponsor';
 
 const linkClass = 'text-indigo-100 hover:text-white font-medium transition'
 
 const menu = {
-  participant: [['/dashboard', 'Dashboard'], ['/team', 'Team'], ['/submit', 'Submit'], ['/leaderboard', 'Leaderboard']],
-  organizer: [['/organizer', 'Organizer'], ['/scan', 'Scan QR'], ['/audit', 'Audit'], ['/leaderboard', 'Leaderboard']],
-  judge: [['/judge', 'Judge'], ['/leaderboard', 'Leaderboard']],
+  participant: [['/dashboard', 'Dashboard'], ['/team', 'Team'], ['/submit', 'Submit'], ['/leaderboard', 'Leaderboard'], ['/sponsor', 'Sponsor']],
+  organizer: [['/organizer', 'Organizer'], ['/scan', 'Scan QR'], ['/audit', 'Audit'], ['/leaderboard', 'Leaderboard'], ['/sponsor', 'Sponsor']],
+  judge: [['/judge', 'Judge'], ['/leaderboard', 'Leaderboard'], ['/sponsor', 'Sponsor']],
 }
 
 function Guard({ role, allow, children }) {
@@ -54,6 +55,7 @@ export default function App() {
             </>
           ) : (
             <>
+              <Link to="/sponsor" className={linkClass}>Sponsor</Link>
               <Link to="/login" className="bg-white text-indigo-700 px-3 py-1 rounded font-semibold">Login</Link>
               <Link to="/register" className="bg-indigo-500 px-3 py-1 rounded font-semibold hover:bg-indigo-400">Register</Link>
             </>
@@ -73,6 +75,7 @@ export default function App() {
         <Route path="/audit" element={<Guard role={role} allow={['organizer']}><AuditLog /></Guard>} />
         <Route path="/judge" element={<Guard role={role} allow={['judge']}><JudgePage /></Guard>} />
         <Route path="/leaderboard" element={<Guard role={role} allow={['participant', 'organizer', 'judge']}><Leaderboard /></Guard>} />
+        <Route path="/sponsor" element={<Sponsor />} />
       </Routes>
     </Router>
   );
