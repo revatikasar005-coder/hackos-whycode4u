@@ -6,6 +6,7 @@ const { auth } = require('../middleware/auth');
 
 const router = express.Router();
 
+
 // POST /auth/register
 router.post('/register', async (req, res) => {
   const { name, email, phone, password, role } = req.body;
@@ -51,6 +52,7 @@ router.post('/login', async (req, res) => {
   const ok = user && await bcrypt.compare(password, user.password_hash);
   if (!ok) return res.status(401).json({ error: 'Invalid email or password' });
 
+  
   const token = jwt.sign(
     { id: user.id, role: user.role },
     process.env.JWT_SECRET,
@@ -58,6 +60,7 @@ router.post('/login', async (req, res) => {
   );
   res.json({ token, role: user.role });
 });
+
 
 // GET /me
 router.get('/me', auth, async (req, res) => {
