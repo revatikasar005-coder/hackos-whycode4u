@@ -33,7 +33,10 @@ Everything else (auth, teams, submissions, check-in, scoring, leaderboard, judge
 - Database: Supabase
 - Payments: PayPal Orders API and JS SDK (Sandbox)
 - AI: Google Gemini API
-
+## AWS Cloud Architecture (AWS ShipIt Challenge)
+- **Frontend Hosting:** AWS Amplify (React + Vite CI/CD)
+- **Asset & QR Storage:** Amazon S3
+- **Builder Profile:** AWS Builder Center (`@revatikasar`)
 ## Run locally
 
 Requirements: Node.js 18 or newer.
